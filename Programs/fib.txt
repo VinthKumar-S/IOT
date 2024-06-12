@@ -1,0 +1,21 @@
+#include <stdio.h>
+
+int main() {
+    int fib[6]; // Array to store the first six Fibonacci numbers
+    fib[0] = 0; // First Fibonacci number
+    fib[1] = 1; // Second Fibonacci number
+
+    // Calculate the next four Fibonacci numbers
+    for (int i = 2; i < 6; i++) {
+        fib[i] = fib[i - 1] + fib[i - 2];
+    }
+
+    // Print the first six Fibonacci numbers
+    printf("The first six Fibonacci numbers are: ");
+    for (int i = 0; i < 6; i++) {
+        printf("%d ", fib[i]);
+    }
+    printf("\n");
+
+    return 0;
+}

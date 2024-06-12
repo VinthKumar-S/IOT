@@ -1,0 +1,3 @@
+#define BLYNK_TEMPLATE_ID "TMPL3rVqmkvpy"
+#define BLYNK_TEMPLATE_NAME "LED on and off"
+#define BLYNK_AUTH_TOKEN "aOoK8liRazcpWXf-1PC_ZArSPdTQC8l5"

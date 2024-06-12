@@ -1,0 +1,59 @@
+#include "AiEsp32RotaryEncoder.h"
+#include "Arduino.h"
+
+#define ROTARY_DT_PIN 23
+#define ROTARY_CLK_PIN 22
+#define ROTARY_SW_PIN 21
+#define ROTARY_VCC_PIN -1
+#define ROTARY_STEPS 4
+
+AiEsp32RotaryEncoder rE = AiEsp32RotaryEncoder(ROTARY_DT_PIN, ROTARY_CLK_PIN, ROTARY_SW_PIN, ROTARY_VCC_PIN, ROTARY_STEPS);
+
+void IRAM_ATTR readEncoderISR(){
+  rE.readEncoder_ISR();
+}
+
+void setup(){
+    Serial.begin(115200);
+    rE.begin();
+    rE.setup(readEncoderISR);
+
+    bool circle_Values=false;
+    rE.setBoundaries(0 , 1000, circle_Values);
+    rE.setAcceleration(250);
+
+}
+
+void loop(){
+  
+  rotary_loop();
+  delay(10000);
+}
+
+
+void rotary_loop(){
+  
+  if(rE.encoderChanged()){
+     Serial.print("Value is:");
+     Serial.println(rE.readEncoder());
+  }
+
+  if(rE.encoderChanged()!=true){
+    Serial.println("Press Up Arrow");
+  }
+
+  if(rE.isEncoderButtonClicked())
+  {
+    ButtonClick();
+  }
+
+}
+
+void ButtonClick()
+{
+  static unsigned long lastTimePressed =0;
+  lastTimePressed=millis();
+  Serial.println("Button Pressed");
+  Serial.println(millis());
+  Serial.println("MilliSeconds After Restart");
+}
