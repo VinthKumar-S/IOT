@@ -1,0 +1,20 @@
+from machine import Pin, PWM
+import time
+
+# Set up the LED pin
+led_pin = 15
+led = PWM(Pin(led_pin))
+led.freq(1000)
+
+# Function to gradually change brightness
+def change_brightness(direction):
+    for i in range(0, 65536, 256):
+        if direction == "increase":
+            led.duty_u16(i)
+        elif direction == "decrease":
+            led.duty_u16(65535 - i)
+        time.sleep(0.02)  # Adjust the sleep time for smoother or faster transition
+
+while True:
+    change_brightness("increase")
+    change_brightness("decrease")

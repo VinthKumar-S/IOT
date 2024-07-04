@@ -1,0 +1,27 @@
+// Define the pin number for the built-in LED
+int ledPin1 = 13;
+int ledPin2=12;
+
+void setup() {
+  // Set the LED pin as an output
+  pinMode(ledPin1, OUTPUT);
+   pinMode(ledPin2, OUTPUT);
+}
+
+void loop() {
+  // Blink the LED quickly 5 times
+  for (int i = 0; i < 3; i++) {
+    digitalWrite(ledPin1, HIGH); // Turn the LED on
+    delay(500); // Wait for 500 milliseconds
+    digitalWrite(ledPin1, LOW); // Turn the LED off
+    delay(500); // Wait for 500 milliseconds
+  }
+
+  // Blink the LED slowly 5 times
+  for (int i = 0; i < 2; i++) {
+    digitalWrite(ledPin2, HIGH); // Turn the LED on
+    delay(2000); // Wait for 2000 milliseconds (2 seconds)
+    digitalWrite(ledPin2, LOW); // Turn the LED off
+    delay(2000); // Wait for 2000 milliseconds (2 seconds)
+  }
+}
