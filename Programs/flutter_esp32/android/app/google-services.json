@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "1030338500463",
+    "firebase_url": "https://esp32-test-8eea4-default-rtdb.firebaseio.com",
+    "project_id": "esp32-test-8eea4",
+    "storage_bucket": "esp32-test-8eea4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1030338500463:android:017df292fea396377e7a9a",
+        "android_client_info": {
+          "package_name": "com.example.flutter_esp32"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD7hnTQ0AbkUF23p2nikoH6M7Fih7auatA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
