@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'firebase_options.dart';
 import 'package:firebase_database/firebase_database.dart';
-import 'package:toggle_switch/toggle_switch.dart';
+import 'package:get/get.dart';
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +20,8 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return MaterialApp(
-      home: ledContainer(),
+    return GetMaterialApp(
+      home: _ledContainerState(),
       debugShowCheckedModeBanner: false,
       theme: ThemeData.light(),
     );
@@ -28,20 +29,43 @@ class MyApp extends StatelessWidget {
   }
 }
 
-class ledContainer extends StatefulWidget {
-  const ledContainer({super.key});
-
-  @override
-  State<ledContainer> createState() => _ledContainerState();
-}
-
-class _ledContainerState extends State<ledContainer> {
-  
+class ledContainer extends GetxController{
   FirebaseDatabase database = FirebaseDatabase.instance;
   final firebaseApp = Firebase.app();
   DatabaseReference ref = FirebaseDatabase.instance.ref();
+  // DatabaseReference refUltraSonic = FirebaseDatabase.instance.ref('ultraSonic');
+  
+  bool light = true.obs();
 
-  bool light = true;
+  var _hydration = 0.0.obs;
+
+  //var data = <dynamic,dynamic>{}.obs;
+
+  @override
+  void onInit() {
+    // TODO: implement onInit
+    super.onInit();
+    readData();
+  }
+
+  void readData(){
+   /* refUltraSonic.once().then((DatabaseEvent event){
+      DataSnapshot snapshot = event.snapshot;
+       if(snapshot.exists){
+        data.value = Map<dynamic, dynamic>.from(snapshot.value as Map);
+       // print(data.value);
+      }    
+    });*/
+    ref.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      _hydration.value = double.parse(data['Hydration']!);
+    });
+  }
+}
+
+class _ledContainerState extends StatelessWidget {
+
+  final controller = Get.put(ledContainer());
 
   final MaterialStateProperty<Icon?> thumIcon = 
     MaterialStateProperty.resolveWith<Icon?>(
@@ -54,56 +78,97 @@ class _ledContainerState extends State<ledContainer> {
     );
   @override
   Widget build(BuildContext context) {
+  
     return  Scaffold(
         appBar: AppBar(
           backgroundColor: Colors.amber,
           title: Text("LED Controller"),
-        ),
-        body:Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                  /*  ToggleSwitch(
-                    initialLabelIndex: 0,
-                    totalSwitches: 2,
-                    labels: ['On','OFF'],
-                    onToggle: (index) async {
-                      if(index == 0){
-                        await ref.update({
-                          "LED_STATUS" : "ON" 
-                        });
-                      }
-                      else if(index == 1){
-                          await ref.update({
-                            "LED_STATUS" : "OFF" 
-                          });
-                      }
-                    },),*/
-                    Switch(
+          leading:  Switch(
                       thumbIcon: thumIcon,
-                      value: light, onChanged: (value) async{
-                        setState(()  {
-                          light = value;
-                          //print(light);
-                        });
+                      value: controller.light, onChanged: (value) async{
                         if(value == true){
-                          await ref.update({
+                          await controller.ref.update({
                             "LED_STATUS" : "ON" 
                           });
                         }
                         else{
-                          await ref.update({
+                          await controller.ref.update({
                             "LED_STATUS" : "OFF" 
                           });
                         }
                       }
+                    ) ,
+        ),
+        body: Obx(()
+        {
+            double hydroLevel=(controller._hydration.value/100);
+            return Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Stack(
+                  children: [
+                    Center(
+                      child: Container(
+                      width: 180,
+                      height: 180,
+                      child: CircularProgressIndicator(
+                        value:hydroLevel ,
+                        strokeWidth: 10,
+                        backgroundColor: Colors.yellow,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
+                        
+                        ),
+                      ),
+                    ),
+
+                    Center(
+                      child: Column(
+                        children: [
+                          SizedBox(height: 65,),
+                          Text(
+                            '$hydroLevel%'
+                            ,style: TextStyle(
+                              fontSize: 35
+                            ),
+                          ),
+                        ],
+                      ),
                     )
                   ],
+                )
+              ],
+            );
+        }
+           /*if(false)
+           {
+              return Center(child: CircularProgressIndicator());
+           }
+           else 
+           {
+
+              return  Center(
+                child: Column(
+                  children: [
+                      Text(""),
+                  ],
                 ),
-          ],
-        ),
-          );
+              );
+             /* var i=0;
+              return ListView.builder(
+                      shrinkWrap: true,
+                      itemCount:controller.data.length,
+                      itemBuilder: (context,index){
+                        //print(controller.data.length);
+                        i++;
+                        String key = controller.data.keys.elementAt(index);
+                        return ListTile(
+                          title: Text('$i : ${controller.data[key]}'),
+                        );
+                      },  
+              );*/
+              
+           }*/
+        )
+      );
   }
 }
