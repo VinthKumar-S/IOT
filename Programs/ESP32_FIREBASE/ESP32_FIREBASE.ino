@@ -11,8 +11,7 @@
 
 #define WIFI_PASSWORD "hmax8875" 
 
-#define TRIG_PIN 23
-#define ECHO_PIN 22//password of wifi ssid
+
 
 float duration_us,distance_cm;
 
@@ -29,16 +28,11 @@ NetworkServer server(80);
 
 void setup() {
 
-  Serial.begin(9600);
+  Serial.begin(115200);
 
   delay(1000);
 
   pinMode(2, OUTPUT); 
-
-  pinMode(TRIG_PIN,OUTPUT);
-
-  pinMode(ECHO_PIN,INPUT);
-
 
   WiFi.begin(ssid, password);
 
@@ -61,23 +55,8 @@ void setup() {
 }
 
 void loop() {
-  digitalWrite(TRIG_PIN,LOW);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN,HIGH);
-  delayMicroseconds(10);
-  digitalWrite(TRIG_PIN, LOW);
 
-  duration_us = pulseIn(ECHO_PIN,HIGH);
-
-  distance_cm = duration_us*(0.034/2);
-
-  // print the value to Serial Monitor
-  Serial.print("distance: ");
-  Serial.print(distance_cm);
-  Serial.println(" cm");
-
-  
-  /*fireStatus = Firebase.getString("LED_STATUS");                     // get led status input from firebase
+  fireStatus = Firebase.getString("LED_STATUS");                     // get led status input from firebase
 
   if (fireStatus == "ON") {                         // compare the input of led status received from firebase
 
@@ -99,7 +78,7 @@ void loop() {
 
     Serial.println("Wrong Credential! Please send ON/OFF");
 
-  }*/
+  }
   delay(500);
 
 }
