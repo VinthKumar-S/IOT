@@ -57,7 +57,7 @@ void setHydration(){
   Serial.println("Hydration : ");
   Serial.println(value);
   
-
+  //set data on firebase
   String path = "/Hydration";
   String strHytro = String(value);
   Firebase.setString(path,strHytro);
@@ -85,4 +85,14 @@ void temperatureLevel(){
   Serial.println(humidity);
   Serial.print("%");
   delay(2000);
+
+  //set temperature data on firebase
+  String tempPath = "/Temperature";
+  String strTemperature = String(temp);
+  Firebase.setString(tempPath,strTemperature);
+
+  //set humidity data on firebase
+  String humidityPath = "/Humidity";
+  String strHumidity = String(temp);
+  Firebase.setString(humidityPath,strHumidity);
 }
