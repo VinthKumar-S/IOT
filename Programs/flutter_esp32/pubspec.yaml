@@ -39,6 +39,7 @@ dependencies:
   firebase_database: ^10.4.9
   toggle_switch: ^2.3.0
   get: ^4.6.6
+  http: ^1.2.0
 
 dev_dependencies:
   flutter_test:

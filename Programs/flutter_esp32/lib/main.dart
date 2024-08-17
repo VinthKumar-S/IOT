@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_esp32/motorController.dart';
+import 'package:flutter_esp32/temperatureMeasurement.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'bottomNavigator.dart';
@@ -21,7 +22,8 @@ class MyApp extends StatelessWidget {
     final bottomNavController controller = Get.put(bottomNavController());
 
   final List pages =[
-     motorContainerState()
+     motorContainerState(),
+     temperatureMeasureState()
   ];
 
   // This widget is the root of your application.
@@ -41,7 +43,7 @@ class MyApp extends StatelessWidget {
           ),
           BottomNavigationBarItem(
             icon:Icon(Icons.beach_access_sharp), 
-            label: '' 
+            label: 'Weather' 
           ),
           BottomNavigationBarItem(
             icon:Icon(Icons.calendar_today_sharp), 
