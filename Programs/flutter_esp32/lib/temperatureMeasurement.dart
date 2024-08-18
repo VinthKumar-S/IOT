@@ -1,29 +1,36 @@
-
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
-import 'package:flutter_esp32/weatherService.dart';
 import 'package:get/get.dart';
 
 class temperatureMeasure extends GetxController{
-  var waatherData = {}.obs;
-  var isLoading = true.obs;
+  var _humidity = 0.0.obs;
+  var _temperature=0.0.obs;
+  
+  FirebaseDatabase database = FirebaseDatabase.instance;
+
+  final firebaseApp = Firebase.app();
+
+  DatabaseReference ref = FirebaseDatabase.instance.ref();
   
   @override
   void onInit() {
     // TODO: implement onInit
     super.onInit();
-    fetchWeather();
+    readData();
   }
 
-  void fetchWeather() async{
-    try{
-      isLoading(true);
-      var data = await weatherService().fetchWeather();
-      waatherData.value = data;
-    }
-    finally {
-      isLoading(false);
-    }
+  void readData() async{
+    ref.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      _temperature.value = double.parse(data['Temperature']!);
+    });
+
+    ref.onValue.listen((event) {
+      final data = event.snapshot.value as Map<dynamic, dynamic>;
+      _humidity.value = double.parse(data['Humidity']!);
+    });
   }
 }
 
@@ -39,22 +46,15 @@ class temperatureMeasureState extends StatelessWidget {
       ),
       body: Center(
         child: Obx((){
-          if(controller.isLoading.value){
-            return CircularProgressIndicator();
-          }
-          else if(controller.waatherData.isEmpty){
-            return Text('Failed to load data');
-          }
-          else{
-            return Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  '${controller.waatherData['city_name']}',
-                )
-              ],
-            );
-          }
+          double temperature=controller._temperature.value;
+          double humidity=controller._humidity.value;
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text('$temperature'),
+              Text('$humidity')
+            ],
+          );
         })
       ),
     );

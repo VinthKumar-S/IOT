@@ -93,6 +93,6 @@ void temperatureLevel(){
 
   //set humidity data on firebase
   String humidityPath = "/Humidity";
-  String strHumidity = String(temp);
+  String strHumidity = String(humidity);
   Firebase.setString(humidityPath,strHumidity);
 }
