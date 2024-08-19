@@ -32,6 +32,18 @@ class temperatureMeasure extends GetxController{
       _humidity.value = double.parse(data['Humidity']!);
     });
   }
+
+  String getWeatherImage(){
+    if(_humidity.value>80){
+      return 'asserts/rainy-removebg-preview.png';
+    }
+    else if(_temperature.value >30){
+      return 'asserts/sunny-removebg-preview.png';
+    }
+    else{
+      return 'asserts/Cloud-removebg-preview.png';
+    }
+  }
 }
 
 class temperatureMeasureState extends StatelessWidget {
@@ -41,17 +53,14 @@ class temperatureMeasureState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
+      /*appBar: AppBar(
         title: Text('Weather Condition'),
         backgroundColor: Colors.amber,
-      ),
+      ),*/
       body:Obx((){
           double temperature=controller._temperature.value;
           double humidity=controller._humidity.value;
-          String weatherCondition ="No Rain";
-          if(humidity>85){
-            weatherCondition="Heavy rain will occure";
-          }
+
           return Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -59,20 +68,18 @@ class temperatureMeasureState extends StatelessWidget {
               //Text('$humidity')
                 Container(
                   width: 500,
-                  height: 150,
+                  height: 200,
                   child: Center(
-                   /* child: Text(
-                      weatherCondition,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 30,
-                        fontWeight: FontWeight.bold
+                    child: AnimatedSwitcher(
+                      duration: Duration(seconds: 10),
+                      transitionBuilder: (Widget child,Animation<double> animation){
+                        return FadeTransition(opacity: animation,child: child,);
+                      },
+                      child: Image.asset(
+                        controller.getWeatherImage(),
+                        width: 200,
+                        height: 200,
                       ),
-                    ),*/
-                    child: Icon(
-                      Icons.wb_sunny,
-                      size: 130,
-                      color: Colors.white,
                     ),
                   ),
                   decoration: BoxDecoration
