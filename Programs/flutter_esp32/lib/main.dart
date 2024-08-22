@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_esp32/motorController.dart';
-import 'package:flutter_esp32/scheduleDate.dart';
+import 'package:flutter_esp32/scheduleDates.dart';
 import 'package:flutter_esp32/temperatureMeasurement.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
@@ -25,7 +25,7 @@ class MyApp extends StatelessWidget {
   final List pages =[
      motorContainerState(),
      temperatureMeasureState(),
-     scheduleDate()
+     scheduleDateState()
   ];
 
   // This widget is the root of your application.
