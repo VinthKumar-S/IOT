@@ -1,4 +1,4 @@
-import 'package:firebase_core/firebase_core.dart';
+
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -8,10 +8,6 @@ class temperatureMeasure extends GetxController{
   var _humidity = 0.0.obs;
   var _temperature=0.0.obs;
   
-  FirebaseDatabase database = FirebaseDatabase.instance;
-
-  final firebaseApp = Firebase.app();
-
   DatabaseReference ref = FirebaseDatabase.instance.ref();
   
   @override
@@ -53,10 +49,17 @@ class temperatureMeasureState extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      /*appBar: AppBar(
-        title: Text('Weather Condition'),
-        backgroundColor: Colors.amber,
-      ),*/
+        appBar: AppBar(
+          backgroundColor: Colors.purple,
+          title: Text(
+            "TEMPERATURE",
+            style: TextStyle(
+              fontWeight: FontWeight.bold,
+              color: Colors.white
+            ),
+            ),
+
+        ),
       body:Obx((){
           double temperature=controller._temperature.value;
           double humidity=controller._humidity.value;

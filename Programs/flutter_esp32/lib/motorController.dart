@@ -1,14 +1,10 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:get/get.dart';
 
 
 class motorContainer extends GetxController
 {
-  FirebaseDatabase database = FirebaseDatabase.instance;
-
-  final firebaseApp = Firebase.app();
 
   DatabaseReference ref = FirebaseDatabase.instance.ref();
 
@@ -59,11 +55,12 @@ class motorContainerState extends StatelessWidget {
     
     return  Scaffold(
         appBar: AppBar(
-          backgroundColor: Colors.amber,
+          backgroundColor: Colors.purple,
           title: Text(
             "HOME",
             style: TextStyle(
-              fontWeight: FontWeight.bold
+              fontWeight: FontWeight.bold,
+              color: Colors.white
             ),
             ),
 
@@ -83,7 +80,7 @@ class motorContainerState extends StatelessWidget {
                       child: CircularProgressIndicator(
                         value:hydroLevel ,
                         strokeWidth: 10,
-                        backgroundColor: Colors.yellow,
+                        backgroundColor: const Color.fromARGB(255, 236, 232, 232),
                         valueColor: AlwaysStoppedAnimation<Color>(Colors.purple),
                         
                         ),
