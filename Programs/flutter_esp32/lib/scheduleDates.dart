@@ -4,7 +4,9 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_esp32/notificationSerivce.dart';
+import 'package:flutter_esp32/schedules.dart';
 import 'package:get/get.dart';
+import 'scheduleOperation.dart';
 
 // NotificationService().showNotification(title: 'Sample Title',body: 'It Works');
 
@@ -90,8 +92,12 @@ class scheduleDateState extends StatelessWidget {
               String date = controller2.text;
               Get.back();
               controler.addSchedule(scheduleName, date);
-              controller1.text="";
-              controller2.text="";
+              controller1.clear();
+              controller2.clear();
+
+             Schedule schedule= Schedule(dates: date, eventName: scheduleName,id:'');
+              
+              
             }
          );
       }),
