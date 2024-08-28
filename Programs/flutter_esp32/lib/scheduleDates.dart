@@ -87,7 +87,7 @@ class scheduleDateState extends StatelessWidget {
             ),
             textConfirm: "Add",
             textCancel: "Cancel",
-            onConfirm: (){
+            onConfirm: () async{
               String scheduleName = controller1.text;
               String date = controller2.text;
               Get.back();
@@ -95,9 +95,8 @@ class scheduleDateState extends StatelessWidget {
               controller1.clear();
               controller2.clear();
 
-             Schedule schedule= Schedule(dates: date, eventName: scheduleName,id:'');
-              
-              
+              Schedule schedule= Schedule(dates: date, eventName: scheduleName,id:1);
+              await addSchedule(schedule);
             }
          );
       }),

@@ -7,6 +7,7 @@ Future<void> addSchedule(Schedule schedule) async{
     print("added");
   }
   catch (e){
+    print("Exception");
     print(e);
   }
 }
