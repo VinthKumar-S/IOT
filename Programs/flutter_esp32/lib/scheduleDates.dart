@@ -88,6 +88,7 @@ class scheduleDateState extends StatelessWidget {
             textConfirm: "Add",
             textCancel: "Cancel",
             onConfirm: () async{
+              print("submit");
               String scheduleName = controller1.text;
               String date = controller2.text;
               Get.back();
