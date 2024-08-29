@@ -1,5 +1,6 @@
 import 'dart:math';
 
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
@@ -14,8 +15,11 @@ class scheduleDate extends GetxController{
 
   DatabaseReference ref = FirebaseDatabase.instance.ref("Schedules");
   
+  var dataList =<DocumentSnapshot>[].obs;
+
   void onInit() {
     // TODO: implement onInit
+    fetchData();
     super.onInit();
   }
 
@@ -33,6 +37,17 @@ class scheduleDate extends GetxController{
         "date":date,
       }
     });
+  }
+
+  void fetchData() async{
+    try{
+      var result = await FirebaseFirestore.instance.collection('schedule').get();
+      dataList.value = result.docs;
+      print(dataList.length);
+    }
+    catch(e){
+      Get.snackbar("Error",e.toString());
+    }
   }
 }
 
@@ -53,9 +68,22 @@ class scheduleDateState extends StatelessWidget {
             ),
         ),
       ),
-      body: SingleChildScrollView(
-
-      ),
+      body: Obx((){
+        if(controler.dataList.isEmpty){
+          return  Center(child: CircularProgressIndicator(),);
+        }
+        else{
+          return ListView.builder(
+            itemCount: controler.dataList.length,
+            itemBuilder:(context,index){  
+                var data= controler.dataList[index];
+                return ListTile(
+                  title: Text(data['eventName']),
+                  subtitle: Text(data['eventDate']),
+                );
+            });
+        }
+      }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.purple,
         child: Icon(
@@ -88,7 +116,6 @@ class scheduleDateState extends StatelessWidget {
             textConfirm: "Add",
             textCancel: "Cancel",
             onConfirm: () async{
-              print("submit");
               String scheduleName = controller1.text;
               String date = controller2.text;
               Get.back();
@@ -96,7 +123,7 @@ class scheduleDateState extends StatelessWidget {
               controller1.clear();
               controller2.clear();
 
-              Schedule schedule= Schedule(dates: date, eventName: scheduleName,id:1);
+              Schedule schedule= Schedule(dates: date, eventName: scheduleName);
               await addSchedule(schedule);
             }
          );
