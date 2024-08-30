@@ -5,7 +5,7 @@ import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_esp32/notificationSerivce.dart';
-import 'package:flutter_esp32/schedules.dart';
+import 'package:flutter_esp32/scheduleObj.dart';
 import 'package:get/get.dart';
 import 'scheduleOperation.dart';
 
@@ -77,6 +77,7 @@ class scheduleDateState extends StatelessWidget {
                 return Card(
                   color: Colors.white,
                   elevation: 10,
+                  shadowColor: Colors.white,
                   child: ListTile(
                     leading: Text(
                       '$index',
@@ -96,7 +97,8 @@ class scheduleDateState extends StatelessWidget {
                     trailing: IconButton(
                       icon: Icon(Icons.remove),
                       onPressed: (){
-                        
+                        deleteDate(data.id);
+                        controler.fetchData();
                       },  
                     ),
                   ),

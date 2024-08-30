@@ -1,5 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:flutter_esp32/schedules.dart';
+import 'package:flutter_esp32/scheduleObj.dart';
 
 Future<void> addSchedule(Schedule schedule) async{
   try{
@@ -10,4 +10,6 @@ Future<void> addSchedule(Schedule schedule) async{
   }
 }
 
-Future<void> deleteProduct(String scheduleId) 
+Future<void> deleteDate(String scheduleId)async {
+    await FirebaseFirestore.instance.collection('schedule').doc(scheduleId).delete();
+}
