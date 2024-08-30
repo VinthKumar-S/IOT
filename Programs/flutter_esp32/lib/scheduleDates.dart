@@ -17,10 +17,10 @@ class scheduleDate extends GetxController{
   
   var dataList =<DocumentSnapshot>[].obs;
 
-  void onInit() {
-    // TODO: implement onInit
-    fetchData();
+  void onInit() async{
+    // TODO: implement onInit 
     super.onInit();
+    fetchData();
   }
 
   void addSchedule(name,date)async{
@@ -69,20 +69,39 @@ class scheduleDateState extends StatelessWidget {
         ),
       ),
       body: Obx((){
-        if(controler.dataList.isEmpty){
-          return  Center(child: CircularProgressIndicator(),);
-        }
-        else{
           return ListView.builder(
+            shrinkWrap: true,
             itemCount: controler.dataList.length,
             itemBuilder:(context,index){  
                 var data= controler.dataList[index];
-                return ListTile(
-                  title: Text(data['eventName']),
-                  subtitle: Text(data['eventDate']),
+                return Card(
+                  color: Colors.white,
+                  elevation: 10,
+                  child: ListTile(
+                    leading: Text(
+                      '$index',
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 20.0
+                      ),
+                    ),
+                    title: Text(
+                      data['eventName']
+                      ,style: TextStyle(
+                        fontStyle: FontStyle.italic,
+                        fontSize: 18.0
+                      ),
+                      ),
+                    subtitle: Text(data['eventDate']),
+                    trailing: IconButton(
+                      icon: Icon(Icons.remove),
+                      onPressed: (){
+                        
+                      },  
+                    ),
+                  ),
                 );
             });
-        }
       }),
       floatingActionButton: FloatingActionButton(
         backgroundColor: Colors.purple,
@@ -125,6 +144,7 @@ class scheduleDateState extends StatelessWidget {
 
               Schedule schedule= Schedule(dates: date, eventName: scheduleName);
               await addSchedule(schedule);
+              controler.fetchData();
             }
          );
       }),

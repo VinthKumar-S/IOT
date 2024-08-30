@@ -9,3 +9,5 @@ Future<void> addSchedule(Schedule schedule) async{
     print(e);
   }
 }
+
+Future<void> deleteProduct(String scheduleId) 
