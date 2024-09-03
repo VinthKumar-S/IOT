@@ -8,14 +8,14 @@ import 'package:flutter_esp32/notificationSerivce.dart';
 import 'package:flutter_esp32/scheduleObj.dart';
 import 'package:get/get.dart';
 import 'scheduleOperation.dart';
+import 'package:intl/intl.dart';
 
 // NotificationService().showNotification(title: 'Sample Title',body: 'It Works');
 
 class scheduleDate extends GetxController{
-
-  DatabaseReference ref = FirebaseDatabase.instance.ref("Schedules");
   
   var dataList =<DocumentSnapshot>[].obs;
+  var selectedDate = ''.obs;
 
   void onInit() async{
     // TODO: implement onInit 
@@ -23,34 +23,41 @@ class scheduleDate extends GetxController{
     fetchData();
   }
 
-  void addSchedule(name,date)async{
-
-    final Random _random = Random();
-
-    var randomNumber = 0.obs;
-
-    randomNumber.value =_random.nextInt(100);
-
-    await ref.set({
-      randomNumber.value:{
-        "name":name,
-        "date":date,
-      }
-    });
-  }
 
   void fetchData() async{
     try{
       var result = await FirebaseFirestore.instance.collection('schedule').get();
       dataList.value = result.docs;
-      print(dataList.length);
+      //print(dataList.length);
     }
     catch(e){
       Get.snackbar("Error",e.toString());
     }
   }
+
+  void updateDate(String date) {
+    selectedDate.value = date;
+   // print(date);
+  }
+
+  Future<void> upcomingEvents() async{
+    var now = DateTime.now();
+
+    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('schedule').get();
+
+    for (var doc in snapshot.docs){
+      DateTime eventDate = (doc['date'] as Timestamp).toDate();
+
+      if(isSameDate(eventDate,now)){
+        NotificationService().showNotification(title: doc['eventName'],);
+      }
+    }
+  }
 }
 
+bool isSameDate(DateTime date1,DateTime date2){
+  return DateFormat('yyyy-MM-dd').format(date1)== DateFormat('yyyy-MM-dd').format(date2);
+}
 class scheduleDateState extends StatelessWidget {
   final controler = Get.put(scheduleDate());
   final TextEditingController controller1 = TextEditingController();
@@ -93,11 +100,11 @@ class scheduleDateState extends StatelessWidget {
                         fontSize: 18.0
                       ),
                       ),
-                    subtitle: Text(data['eventDate']),
+                    subtitle: Text(data['eventDate'].toString().substring(0,10).split('-').reversed.join('-')),
                     trailing: IconButton(
                       icon: Icon(Icons.remove),
-                      onPressed: (){
-                        deleteDate(data.id);
+                      onPressed: ()async{
+                        await deleteDate(data.id);
                         controler.fetchData();
                       },  
                     ),
@@ -125,13 +132,23 @@ class scheduleDateState extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10,),
-                TextFormField(
-                  controller: controller2,
-                  decoration: InputDecoration(
-                    labelText: 'Date',
-                    border: OutlineInputBorder()
-                  ),
-                )
+                Obx((){ 
+                    var date ="".obs;
+                    if(controler.selectedDate.value.length != 0){
+                      date.value = controler.selectedDate.value.substring(0,10).split('-').reversed.join('-');
+                    }
+                    return TextFormField(
+                      readOnly: true,
+                      controller: TextEditingController(
+                        text: date.value
+                      ),
+                      onTap: () => _selectDate(context),
+                      decoration: InputDecoration(
+                        labelText: 'Date',
+                        border: OutlineInputBorder()
+                      ),
+                    );
+                 })
               ],
             ),
             textConfirm: "Add",
@@ -140,16 +157,29 @@ class scheduleDateState extends StatelessWidget {
               String scheduleName = controller1.text;
               String date = controller2.text;
               Get.back();
-              controler.addSchedule(scheduleName, date);
               controller1.clear();
               controller2.clear();
 
-              Schedule schedule= Schedule(dates: date, eventName: scheduleName);
+              Schedule schedule= Schedule(dates: controler.selectedDate.value, eventName: scheduleName);
               await addSchedule(schedule);
               controler.fetchData();
-            }
+            },
          );
       }),
     );
+  }
+
+  _selectDate(BuildContext context) async{
+    DateTime initialDate = DateTime.now();
+    DateTime? pickedDate = await showDatePicker(
+      context: context,
+      initialDate: initialDate, 
+      firstDate: DateTime(2020), 
+      lastDate: DateTime(2030));
+
+      if (pickedDate != null){
+        String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(pickedDate);
+        controler.updateDate(formattedDate);
+      }
   }
 }
