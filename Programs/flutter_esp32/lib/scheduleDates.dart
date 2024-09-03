@@ -1,7 +1,5 @@
-import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_database/firebase_database.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_esp32/notificationSerivce.dart';
@@ -40,19 +38,7 @@ class scheduleDate extends GetxController{
    // print(date);
   }
 
-  Future<void> upcomingEvents() async{
-    var now = DateTime.now();
 
-    QuerySnapshot snapshot = await FirebaseFirestore.instance.collection('schedule').get();
-
-    for (var doc in snapshot.docs){
-      DateTime eventDate = (doc['date'] as Timestamp).toDate();
-
-      if(isSameDate(eventDate,now)){
-        NotificationService().showNotification(title: doc['eventName'],);
-      }
-    }
-  }
 }
 
 bool isSameDate(DateTime date1,DateTime date2){
