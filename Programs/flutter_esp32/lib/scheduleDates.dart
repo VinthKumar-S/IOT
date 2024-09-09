@@ -1,18 +1,17 @@
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_esp32/scheduleObj.dart';
 import 'package:get/get.dart';
 import 'scheduleOperation.dart';
-import 'package:intl/intl.dart';
+
 
 // NotificationService().showNotification(title: 'Sample Title',body: 'It Works');
 
 class scheduleDate extends GetxController{
   
   var dataList =<DocumentSnapshot>[].obs;
-  var selectedDate = ''.obs;
+  var selectedDateTime = ''.obs;
 
   void onInit() async{
     // TODO: implement onInit 
@@ -32,21 +31,19 @@ class scheduleDate extends GetxController{
     }
   }
 
-  void updateDate(String date) {
-    selectedDate.value = date;
-   // print(date);
+  void updateDateTime(DateTime newDateTime) {
+    selectedDateTime.value = newDateTime.toString();
   }
 
-
 }
 
-bool isSameDate(DateTime date1,DateTime date2){
-  return DateFormat('yyyy-MM-dd').format(date1)== DateFormat('yyyy-MM-dd').format(date2);
-}
 class scheduleDateState extends StatelessWidget {
   final controler = Get.put(scheduleDate());
   final TextEditingController controller1 = TextEditingController();
   final TextEditingController controller2 = TextEditingController();
+  
+  var date ="".obs;
+  var time ="".obs;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -118,9 +115,9 @@ class scheduleDateState extends StatelessWidget {
                 ),
                 SizedBox(height: 10,),
                 Obx((){ 
-                    var date ="".obs;
-                    if(controler.selectedDate.value.length != 0){
-                      date.value = controler.selectedDate.value.substring(0,10).split('-').reversed.join('-');
+                    if(controler.selectedDateTime.value.length != 0){
+                      date.value = controler.selectedDateTime.value.substring(0,10).split('-').reversed.join('-');
+                      time.value = controler.selectedDateTime.value.substring(11,19).split('-').reversed.join('-');
                     }
                     return TextFormField(
                       readOnly: true,
@@ -140,14 +137,17 @@ class scheduleDateState extends StatelessWidget {
             textCancel: "Cancel",
             onConfirm: () async{
               String scheduleName = controller1.text;
-              String date = controller2.text;
               Get.back();
-              controller1.clear();
-              controller2.clear();
-
-              Schedule schedule= Schedule(dates: controler.selectedDate.value, eventName: scheduleName);
+              controller1.text="";
+              controller2.text="";
+              print(time.value);
+              Schedule schedule= Schedule(dates: date.value ,eventName: scheduleName,time:time.value);
               await addSchedule(schedule);
               controler.fetchData();
+            },
+            onCancel: () async{
+              controller2.text="";
+              controller1.text="";
             },
          );
       }),
@@ -163,8 +163,22 @@ class scheduleDateState extends StatelessWidget {
       lastDate: DateTime(2030));
 
       if (pickedDate != null){
-        String formattedDate = DateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'").format(pickedDate);
-        controler.updateDate(formattedDate);
+        final TimeOfDay? pickedTime = await showTimePicker(
+          context:context,
+          initialTime: TimeOfDay.fromDateTime(initialDate) 
+        );
+
+        if(pickedTime != null){
+          controler.updateDateTime(DateTime(
+            pickedDate.year,
+            pickedDate.month,
+            pickedDate.day,
+            pickedTime.hour,
+            pickedTime.minute,
+          ));
+        }
+        
       }
+
   }
 }
