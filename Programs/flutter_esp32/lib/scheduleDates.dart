@@ -6,8 +6,6 @@ import 'package:get/get.dart';
 import 'scheduleOperation.dart';
 
 
-// NotificationService().showNotification(title: 'Sample Title',body: 'It Works');
-
 class scheduleDate extends GetxController{
   
   var dataList =<DocumentSnapshot>[].obs;

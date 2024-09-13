@@ -7,12 +7,18 @@ import 'package:flutter_esp32/temperatureMeasurement.dart';
 import 'firebase_options.dart';
 import 'package:get/get.dart';
 import 'bottomNavigator.dart';
+import 'package:cron/cron.dart';
+import 'package:flutter_esp32/notificationSerivce.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(
     options: DefaultFirebaseOptions.currentPlatform,
   );
+  final cron = Cron();
+   cron.schedule(Schedule.parse('*/5 * * * *'), () async{ 
+      print("Seconds..");
+  });
   runApp(MyApp());
 }
 
