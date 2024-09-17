@@ -16,8 +16,11 @@ void main() async {
     options: DefaultFirebaseOptions.currentPlatform,
   );
   final cron = Cron();
-   cron.schedule(Schedule.parse('*/5 * * * *'), () async{ 
-      print("Seconds..");
+  final NotificationService notificationService = NotificationService();
+   cron.schedule(Schedule.parse('1 * * * *'), () async{ 
+      notificationService.showNotification(
+          title: "Test",body:"Success"
+        );
   });
   runApp(MyApp());
 }
