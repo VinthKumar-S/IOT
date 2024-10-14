@@ -3,7 +3,7 @@
 #include <IOXhop_FirebaseESP32.h>
 #include <DHT.h>
 #define sensor 33
-#define relay 4
+#define relay 2
 #define FIREBASE_HOST "esp32-test-8eea4-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "W7MeD1nAYqeDiBgfnNVRcZIiSVJNydh4RcmcLH6L"
 
@@ -46,7 +46,7 @@ void loop() {
   setHydration();
   getMotorStatus();
   temperatureLevel();
-  delay(100);
+  delay(50);
 }
 
 void setHydration(){
@@ -84,9 +84,9 @@ void temperatureLevel(){
   Serial.println("Humidity: ");
   Serial.println(humidity);
   Serial.print("%");
-  delay(2000);
+  delay(50);
 
-  //set temperature data on firebase
+  //set temperature  data on firebase
   String tempPath = "/Temperature";
   String strTemperature = String(temp);
   Firebase.setString(tempPath,strTemperature);
