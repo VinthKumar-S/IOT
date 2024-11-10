@@ -1,60 +1,46 @@
 import serial
-import time
+from matplotlib.animation import FuncAnimation
 import matplotlib.pyplot as plt
 import numpy as np
+from scipy.signal import butter ,filtfilt
 
 arduino = serial.Serial(port='COM4',baudrate=9600,timeout=1)
 
-def plot_init():
-    plt.ion()
-    fig, ax = plt.subplots(figsize=(16,8))
-    ax.set_ylim(400,700)
-    ax.set_xlabel("Time (s)")
-    ax.set_ylabel("ECG/Respiration Value")
-    return fig,ax
 
-def read_and_plot():
-    fig,ax = plot_init()
-    time_values = []
-    ecg_values = []
+y_values =[]
 
-    start_time = time.time()
-    while True:
-        try:
-            arduino_data = arduino.readline().decode('utf-8').strip()
-            if arduino_data:
-                print(arduino_data)
+def apply_ecg_filter(data,lowcut=0.5,highcut=50.0,fs=250.0,order=2):
+    nyquist = 0.5 * fs
+    low = lowcut/nyquist
+    high= highcut/nyquist
+    b,a = butter (order,[low,high] ,btype='band')
+    return filtfilt(b,a,data)
 
-                parts = arduino_data.split(":")
-                if len(parts) == 2:
-                    try:
-                        ecg_values = float(parts[1])
+def update(frame):
+    arduino_data = arduino.readline().decode('utf-8').strip()
 
-                        elaspsed_time = time.time() - start_time
-                        time_values.append(elaspsed_time)
-                        ecg_values.append(ecg_values)
+    try:
+        
+        value = float(arduino_data)
+        y_values.append(value)
 
-                        ax.clear()
-                        ax.plot(time_value,ecg_value,label='ECG/Respiration')
-                        ax.legend()
-                        ax.set_ylim(400,700)
-                        ax.set_xlabel("Time (s)")
-                        ax.set_ylabel("ECG/Respiration Value")
-                        plt.pause(0.1)
-                    except ValueError:
-                        print("Format Error")
-        except serial.SerialException:
-            print("Device connection lossed")
+        if len(y_values)>500:
+            y_values.pop(0)
+        
+        if len(y_values) > 50:
+            ecg_signal = apply_ecg_filter(np.array(y_values),lowcut=0.5,highcut=50.0,fs=250.0)
+        else:
+            ecg_signal = np.array(y_values)
+        
+        plt.clf()
+        x_values = list(range(len(ecg_signal)))
+        plt.plot(x_values,ecg_signal,color='blue')
+        plt.ylim([-2,2])
+        plt.grid()
 
-            try:
-                arduino.close()
-            except serial.SerialException:
-                print("Unnable to connect")
-                break
-        except KeyboardInterrupt:
-            print('Plotting stopped')
-            break
-    arduino.close()
+    except ValueError:
+        print(f"Invalid data:{arduino_data}")
 
-if __name__ == '__main__':
-    read_and_plot()
+ani = FuncAnimation(plt.gcf(),update,interval=10)
+
+plt.show()
